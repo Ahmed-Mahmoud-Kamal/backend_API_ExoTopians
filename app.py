@@ -3,7 +3,8 @@ from flask_cors import CORS  # allows React frontend to call Flask backend
 from ModelClass import PredictionModel
 import artifacts
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 service = PredictionModel(artifacts_dir="artifacts")
 # // Expected API response format:
 #       // {
