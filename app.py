@@ -27,6 +27,13 @@ def check_status():
     """A simple GET request to check if the server is alive and CORS is enabled."""
     return "Exoplanet Analysis API is running and CORS is configured."
 
+# FIX: Handle the automatic browser request for favicon.ico
+@app.route('/favicon.ico')
+def favicon():
+    """Returns a 204 No Content response to handle automatic favicon requests gracefully."""
+    # This prevents the request from triggering a 500 error in the absence of a file.
+    return '', 204
+
 @app.route("/", methods=["POST"])
 def analyze():
     """Handles the main POST request for exoplanet prediction."""
