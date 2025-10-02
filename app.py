@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # allows React frontend to call Flask backend
 from ModelClass import PredictionModel
 import artifacts
+from flask import send_from_directory
+
 
 # 1. Initialize Flask app
 app = Flask(__name__)
@@ -28,6 +30,8 @@ def check_status():
     return "Exoplanet Analysis API is running and CORS is configured."
 
 # FIX: Handle the automatic browser request for favicon.ico
+
+
 @app.route('/favicon.ico')
 def favicon():
     """Returns a 204 No Content response to handle automatic favicon requests gracefully."""
