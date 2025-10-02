@@ -1,0 +1,62 @@
+{
+  "feature_map": {
+    "orbper": [
+      "pl_orbper",
+      "koi_period"
+    ],
+    "trandep": [
+      "pl_trandep",
+      "koi_depth"
+    ],
+    "trandur": [
+      "pl_trandurh",
+      "pl_trandur",
+      "koi_duration"
+    ],
+    "rade": [
+      "pl_rade",
+      "koi_prad"
+    ],
+    "insol": [
+      "pl_insol",
+      "koi_insol"
+    ],
+    "eqt": [
+      "pl_eqt",
+      "koi_teq"
+    ],
+    "teff": [
+      "st_teff",
+      "koi_steff"
+    ],
+    "logg": [
+      "st_logg",
+      "koi_slogg"
+    ],
+    "rad": [
+      "st_rad",
+      "koi_srad"
+    ],
+    "disposition": [
+      "disposition",
+      "koi_disposition",
+      "tfopwg_disp"
+    ]
+  },
+  "numeric_cols": [
+    "orbper",
+    "trandep",
+    "trandur",
+    "rade",
+    "insol",
+    "eqt",
+    "teff",
+    "logg",
+    "rad"
+  ],
+  "model_type": "XGBClassifier",
+  "imputer_filename": "imputer.joblib",
+  "whisker_filename": "whisker_map.json",
+  "model_filename": "model.pkl",
+  "label_encoder_filename": "label_encoder.pkl"
+}
