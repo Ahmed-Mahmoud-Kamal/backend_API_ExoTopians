@@ -15,7 +15,7 @@ service = PredictionModel(artifacts_dir="artifacts")
 #       // }
 
 
-@app.route("/api/analyze", methods=["POST"])
+@app.route("/", methods=["POST"])
 def analyze():
     data = request.get_json()
     print("Received from frontend:", data) 
