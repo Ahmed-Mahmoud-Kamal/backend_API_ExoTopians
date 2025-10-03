@@ -54,30 +54,38 @@ def analyze_csv():
     """
     Endpoint to process CSV data with ML model.
     
-    Expected JSON format:
+    Expected JSON format (array of objects):
     [
         {"orbper": 365.25, "trandep": 100, "trandur": 3.5, ...},
         {"orbper": 400.0, "trandep": 120, "trandur": 4.0, ...},
         ...
     ]
+    
+    Returns: JSON array with added prediction columns
     """
-    print("Received request for /api/analyze_csv")
-   
     try:
-        # Get JSON data from request
+        # Get JSON data from request (array of objects)
         data = request.get_json()
-        print(f"Data received: {data}")
+        
         if not data:
             return jsonify({"error": "No data provided"}), 400
         
         if not isinstance(data, list):
-            return jsonify({"error": "Data must be a list of objects"}), 400
+            return jsonify({"error": "Data must be an array of objects"}), 400
+        
+        if len(data) == 0:
+            return jsonify({"error": "Data array is empty"}), 400
         
         # Validate required fields
         required_fields = ['orbper', 'trandep', 'trandur', 'rade', 'insol', 
                           'eqt', 'teff', 'logg', 'rad']
         
         for idx, row in enumerate(data):
+            if not isinstance(row, dict):
+                return jsonify({
+                    "error": f"Row {idx} must be an object/dictionary"
+                }), 400
+                
             missing_fields = [field for field in required_fields if field not in row]
             if missing_fields:
                 return jsonify({
@@ -86,19 +94,9 @@ def analyze_csv():
         
         # Process each row with the model
         results = []
-        for row in data:
+        for idx, row in enumerate(data):
             try:
-
-# result_type = modelResult["prediction"].lower().replace(' ', '_')
-#     result = {
-#         "type": result_type,
-#         "confidence": modelResult['probabilities'][modelResult['prediction']] * 100,
-#         "title": title_map[result_type],
-#         "description": description_map[result_type]
-    # }
-
-                prediction= service.predict(row, return_proba=True)
-                
+                prediction = service.predict(row, return_proba=True)
                 # Add original data plus predictions
                 result_row = row.copy()
                 result_row['model_prediction'] = prediction['prediction'].lower().replace(' ', '_')
@@ -107,32 +105,11 @@ def analyze_csv():
                 
             except Exception as e:
                 return jsonify({
-                    "error": f"Error processing row: {str(e)}"
+                    "error": f"Error processing row {idx}: {str(e)}"
                 }), 500
         
-        # Convert to DataFrame
-        df = pd.DataFrame(results)
-        
-        # Create CSV in memory
-        csv_buffer = io.StringIO()
-        df.to_csv(csv_buffer, index=False)
-        csv_buffer.seek(0)
-        
-        # Convert to bytes for sending
-        csv_bytes = io.BytesIO(csv_buffer.getvalue().encode())
-        csv_bytes.seek(0)
-        
-        # Generate filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"analysis_results_{timestamp}.csv"
-        
-        # Send the CSV file
-        return send_file(
-            csv_bytes,
-            mimetype='text/csv',
-            as_attachment=True,
-            download_name=filename
-        )
+        # Return the array of objects with added columns
+        return jsonify(results), 200
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
