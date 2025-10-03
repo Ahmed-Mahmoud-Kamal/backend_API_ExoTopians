@@ -227,20 +227,15 @@ class PredictionModel:
         # multi-row -> append columns to original and save CSV
         df_out = df_original.reset_index(drop=True)
         df_out["prediction"] = preds_decoded
-        # ensure integer dtype for indices when possible
-        try:
-            df_out["prediction_index"] = preds_idx.astype(int)
-        except Exception:
-            df_out["prediction_index"] = preds_idx
 
         if proba_list is not None:
-            class_labels = list(proba_list[0].keys())
-            for cl in class_labels:
-                df_out[f"prob_{cl}"] = [p.get(cl, None) for p in proba_list]
+          confidence_levels = []
+          for i, pred in enumerate(preds_decoded):
+              confidence_levels.append(proba_list[i].get(str(pred), None))
+          df_out["confidence_level"] = confidence_levels
 
         if not output_csv_path:
             timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
             output_csv_path = os.path.join(self.artifacts_dir, f"predictions_{timestamp}.csv")
         df_out.to_csv(output_csv_path, index=False)
         return output_csv_path
-    
