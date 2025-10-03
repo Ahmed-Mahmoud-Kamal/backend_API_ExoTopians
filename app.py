@@ -61,12 +61,12 @@ def analyze_csv():
         ...
     ]
     """
-
+    print("Received request for /api/analyze_csv")
    
     try:
         # Get JSON data from request
         data = request.get_json()
-        
+        print(f"Data received: {data}")
         if not data:
             return jsonify({"error": "No data provided"}), 400
         
